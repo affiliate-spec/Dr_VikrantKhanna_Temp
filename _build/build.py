@@ -12,9 +12,13 @@ Placeholders available inside page bodies:
     {{l:name}}   Line icon from the sprite (#l-name)
     {{PHONE}} {{TEL}} {{WA}} {{WA_VK}} {{WA_RK}} {{MAP}} {{MAP_EMBED}} {{ADDR}} {{BOOK}}
 
+It also minifies _build/src/site.css and _build/src/site.js into assets/, adds
+cache-busting versions, and inlines only the icon symbols each page uses.
+
 Run:  python3 _build/build.py
 """
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -70,6 +74,12 @@ def head(meta):
     og_img = f"{SITE_URL}/assets/img/logo/og-image.jpg" if SITE_URL else "assets/img/logo/og-image.jpg"
     canonical = f'\n  <link rel="canonical" href="{url}">\n  <meta property="og:url" content="{url}">' if url else ""
     schema = SCHEMA if meta["file"] == "index.html" else ""
+    preload = ""
+    if meta.get("preload"):  # e.g. "vikrant|(max-width: 680px) 46vw, 270px" — mirrors the <img> srcset/sizes
+        who, sizes = meta["preload"].split("|")
+        full = {"vikrant": 588, "ritu": 580}[who]
+        srcset = ", ".join(f"assets/img/doctors/dr-{who}-{w}.webp {w}w" for w in (240, 360, 480, full))
+        preload = f'\n  <link rel="preload" as="image" imagesrcset="{srcset}" imagesizes="{sizes}" fetchpriority="high">'
     return f"""<!doctype html>
 <html lang="en-IN" class="no-js">
 <head>
@@ -93,10 +103,8 @@ def head(meta):
   <link rel="icon" type="image/png" sizes="192x192" href="assets/img/logo/icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/img/logo/icon-180.png">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="assets/css/site.css">{schema}
+{preload}
+  <link rel="stylesheet" href="assets/css/site.css?v={CSS_V}">{schema}
 </head>
 """
 
@@ -154,7 +162,7 @@ def header(active):
   <a class="sg-skip" href="#main">Skip to content</a>
   <svg class="sg-sprite" aria-hidden="true" focusable="false">
     <!-- Solid icons: Font Awesome Free 6, CC BY 4.0, https://fontawesome.com/license/free -->
-{SPRITE}
+{{{{SPRITE}}}}
   </svg>
 
   <div class="sg-topbar">
@@ -272,13 +280,56 @@ def footer():
     <a class="sg-mbar__book" href="{BOOK}">{icon("calendar-check")} Book</a>
   </nav>
 
-  <script src="assets/js/site.js" defer></script>
+  <script src="assets/js/site.js?v={JS_V}" defer></script>
 </body>
 </html>
 """
 
 
-SPRITE = (HERE / "partials/fa-symbols.html").read_text().rstrip() + "\n" + (HERE / "partials/line-symbols.html").read_text().rstrip()
+SYMBOLS = {
+    m.group(1): m.group(0)
+    for part in ("partials/fa-symbols.html", "partials/line-symbols.html")
+    for m in re.finditer(r'<symbol id="([^"]+)".*?</symbol>', (HERE / part).read_text(), re.S)
+}
+
+
+def sprite_for(html):
+    """Only the symbols this page actually references."""
+    used = sorted(set(re.findall(r'href="#([il]-[a-z0-9-]+)"', html)))
+    missing = [u for u in used if u not in SYMBOLS]
+    if missing:
+        raise SystemExit(f"Missing icon symbols: {missing}")
+    return "\n".join(SYMBOLS[u] for u in used)
+
+
+def minify_css(css):
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    css = re.sub(r"\s+", " ", css)
+    css = re.sub(r"\s*([{};,>])\s*", r"\1", css)
+    css = re.sub(r":\s+", ":", css)
+    css = css.replace(";}", "}")
+    return css.strip() + "\n"
+
+
+def minify_js(js):
+    js = re.sub(r"/\*.*?\*/", "", js, flags=re.S)
+    lines = [ln.strip() for ln in js.splitlines()]
+    return "\n".join(ln for ln in lines if ln and not ln.startswith("//")) + "\n"
+
+
+def minify_html(html):
+    html = re.sub(r"<!--(?!\s*Solid icons).*?-->", "", html, flags=re.S)
+    return re.sub(r"\s*\n\s*", "\n", html).strip() + "\n"
+
+
+def build_asset(src, dest, fn):
+    out = fn((HERE / src).read_text())
+    (ROOT / dest).write_text(out)
+    return hashlib.md5(out.encode()).hexdigest()[:8]
+
+
+CSS_V = build_asset("src/site.css", "assets/css/site.css", minify_css)
+JS_V = build_asset("src/site.js", "assets/js/site.js", minify_js)
 
 TOKENS = {
     "{{PHONE}}": PHONE, "{{TEL}}": TEL, "{{WA}}": WA, "{{WA_VK}}": WA_VK, "{{WA_RK}}": WA_RK,
@@ -307,7 +358,8 @@ def main():
         first, _, body = text.partition("\n")
         meta = json.loads(first.strip()[4:-3])
         html = head(meta) + header(meta["nav"]) + render(body) + footer()
-        (ROOT / meta["file"]).write_text(html)
+        html = html.replace("{{SPRITE}}", sprite_for(html))
+        (ROOT / meta["file"]).write_text(minify_html(html))
         print(f"built {meta['file']}")
 
 

@@ -18,7 +18,7 @@
         </div>
         <div class="sg-docs">
           <article class="sg-doc" data-rise>
-            <div class="sg-doc__photo"><img src="assets/img/doctors/dr-vikrant-640.webp" width="588" height="879" alt="Dr. Vikrant Khanna"></div>
+            <div class="sg-doc__photo"><img src="assets/img/doctors/dr-vikrant-480.webp" srcset="assets/img/doctors/dr-vikrant-360.webp 360w, assets/img/doctors/dr-vikrant-480.webp 480w, assets/img/doctors/dr-vikrant-588.webp 588w" sizes="(max-width: 680px) calc(100vw - 34px), (max-width: 1080px) 40vw, 250px" width="588" height="879" decoding="async" alt="Dr. Vikrant Khanna"></div>
             <div class="sg-doc__body">
               <span class="sg-doc__kicker">Digestive &amp; Liver Health</span>
               <h3 class="sg-doc__name">Dr. Vikrant Khanna</h3>
@@ -33,7 +33,7 @@
             </div>
           </article>
           <article class="sg-doc sg-doc--rose" data-rise data-d="1">
-            <div class="sg-doc__photo"><img src="assets/img/doctors/dr-ritu-640.webp" width="580" height="867" alt="Dr. Ritu Khanna"></div>
+            <div class="sg-doc__photo"><img src="assets/img/doctors/dr-ritu-480.webp" srcset="assets/img/doctors/dr-ritu-360.webp 360w, assets/img/doctors/dr-ritu-480.webp 480w, assets/img/doctors/dr-ritu-580.webp 580w" sizes="(max-width: 680px) calc(100vw - 34px), (max-width: 1080px) 40vw, 250px" width="580" height="867" decoding="async" alt="Dr. Ritu Khanna"></div>
             <div class="sg-doc__body">
               <span class="sg-doc__kicker">Women&rsquo;s Health</span>
               <h3 class="sg-doc__name">Dr. Ritu Khanna</h3>
@@ -67,7 +67,11 @@
         </div>
         <div class="sg-visit" data-rise data-d="1">
           <div class="sg-visit__map" style="aspect-ratio:auto;flex:1;min-height:380px">
-            <iframe src="{{MAP_EMBED}}" title="Map: Santosh Gastro Gynae Clinic, LDA Colony, Lucknow" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <div class="sg-map" data-src="{{MAP_EMBED}}">
+              <span class="sg-map__pin">{{i:location-dot}}</span>
+              <span class="sg-map__label">LDA Colony, Kanpur Road, Lucknow</span>
+              <button class="sg-btn sg-btn--outline sg-btn--sm sg-map__load" type="button">Show map</button>
+            </div>
           </div>
           <div class="sg-visit__body">
             <a class="sg-btn sg-btn--primary" href="{{MAP}}" target="_blank" rel="noopener">{{i:location-dot}} Get Directions</a>
