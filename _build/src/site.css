@@ -1030,8 +1030,6 @@ iframe { border: 0; display: block; }
   padding: 28px; border-radius: var(--r-lg);
   background: var(--ivory); border: 1px solid var(--line);
 }
-.sg-quote__stars { display: flex; gap: 3px; }
-.sg-quote__stars .sg-ic { width: 14px; height: 14px; color: var(--gold); }
 .sg-quote blockquote { font-size: 15.5px; color: var(--text-2); line-height: 1.7; }
 .sg-quote blockquote::before {
   content: "\201C"; display: block; font-family: var(--serif); font-size: 52px; line-height: .6;

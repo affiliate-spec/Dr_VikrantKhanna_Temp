@@ -98,7 +98,7 @@ def head(meta):
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
 
-  <link rel="icon" type="image/svg+xml" href="assets/img/logo/santosh-mark.svg">
+  <link rel="icon" type="image/png" href="assets/img/logo/santosh-mark.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/img/logo/icon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/img/logo/icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/img/logo/icon-180.png">
@@ -138,7 +138,7 @@ SCHEMA = f"""
 
 
 def brand(tag="a"):
-    inner = """<img src="assets/img/logo/santosh-mark.svg" width="50" height="50" alt="">
+    inner = """<img src="assets/img/logo/santosh-mark.png" width="50" height="50" alt="">
         <span class="sg-brand__text">
           <span class="sg-brand__name">SANTOSH</span>
           <span class="sg-brand__sub"><b>Gastro</b> · <i>Gynae</i> · Clinic</span>
@@ -229,7 +229,7 @@ def footer():
       <div class="sg-footer__grid">
         <div>
           <div class="sg-footer__brand">
-            <img src="assets/img/logo/santosh-mark.svg" width="58" height="58" alt="">
+            <img src="assets/img/logo/santosh-mark.png" width="58" height="58" alt="">
             <div>
               <strong>Santosh Gastro Gynae Clinic</strong>
               <span>Lucknow</span>

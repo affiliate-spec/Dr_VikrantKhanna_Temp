@@ -43,4 +43,12 @@ When the domain is live, set `SITE_URL` in `build.py` and rebuild. That adds the
 - **New photos:** to add or replace a photo, export the same widths as WebP with `cwebp -q 80 -m 6 -sharp_yuv -metadata none`.
 
 ## Logo
-`assets/img/logo/santosh-mark.svg` is the master mark. To re-export the print versions (horizontal lockup, reversed lockup, seal, app icon), serve the site folder locally, for example with `python3 -m http.server`. Then open `_build/logo-render.html#lockup` in Chrome (or `#lockup-light`, `#seal`, `#icon`). The social-share image template is `_build/og-render.html`.
+`assets/img/logo/santosh-mark.png` is the master mark (the icon alone, used in the header, favicon and as a watermark) — a transparent PNG, high-resolution enough for any on-site use. The full lockups (mark + wordmark) live alongside it:
+
+| File | Use |
+|---|---|
+| `santosh-logo-main.png` | Website, clinic signage |
+| `santosh-logo-circular.png` | Social media |
+| `santosh-logo-horizontal.png` | Visiting cards, letterheads |
+
+All four have a transparent background, so they drop onto any colour. `_build/logo-render.html` (icon/lockup/seal exports from the old placeholder mark) is no longer used now that real logo files exist, but is left in place in case it's useful again. The social-share image template is `_build/og-render.html`.
