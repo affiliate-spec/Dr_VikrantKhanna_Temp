@@ -130,7 +130,7 @@ SCHEMA = f"""
       {{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], "opens": "19:00", "closes": "21:00" }}
     ],
     "employee": [
-      {{ "@type": "Physician", "name": "Dr. Vikrant Khanna", "description": "MBBS, MD, PDCC, DM — Gastroenterologist & Hepatologist" }},
+      {{ "@type": "Physician", "name": "Dr. Vikrant Khanna", "description": "MBBS, MD, PDCC, DM (SGPGI) — Gastroenterologist & Hepatologist" }},
       {{ "@type": "Physician", "name": "Dr. Ritu Khanna", "description": "MBBS, MS (Obstetrics & Gynaecology) — Obstetrician & Gynaecologist" }}
     ]
   }}
@@ -149,12 +149,13 @@ def brand(tag="a"):
 
 
 def header(active):
+    active_attr = ' class="active" aria-current="page"'
     nav = "\n".join(
-        f'        <a href="{href}"{" class=\"active\" aria-current=\"page\"" if key == active else ""}>{label}</a>'
+        f'        <a href="{href}"{active_attr if key == active else ""}>{label}</a>'
         for key, href, label in NAV
     )
     dnav = "\n".join(
-        f'        <a href="{href}"{" class=\"active\" aria-current=\"page\"" if key == active else ""}>{label} {icon("chevron-right")}</a>'
+        f'        <a href="{href}"{active_attr if key == active else ""}>{label} {icon("chevron-right")}</a>'
         for key, href, label in NAV
     )
     return f"""
